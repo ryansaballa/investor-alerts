@@ -12,6 +12,11 @@
       <input type="text" id="title" placeholder="Title" required />
       <input type="date" id="date" placeholder="Date" required />
       <input type="text" id="summary" placeholder="Summary" required />
+      <textarea
+        id="description"
+        placeholder="Full Description"
+        required
+      ></textarea>
       <input type="url" id="link" placeholder="Related Link" required />
 
       <select id="risk">
@@ -27,7 +32,8 @@
     <div id="adminContainer"></div>
   </body>
 
-  <script src="app.js">
+  <script src="app.js"></script>
+  <script>
     setupForm()
     loadAdminAlerts()
   </script>
