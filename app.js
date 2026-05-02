@@ -16,7 +16,6 @@ function createAlertFromForm() {
     id: Date.now(),
     title: document.getElementById("title").value,
     summary: document.getElementById("summary").value,
-    description: document.getElementById("description").value,
     link: document.getElementById("link").value,
     riskLevel: document.getElementById("risk").value,
     createdAt: document.getElementById("date").value,
@@ -35,7 +34,7 @@ function setupForm() {
     // newAlert stores data from the createAlertFromForm function
     const newAlert = createAlertFromForm()
 
-    // get existing alerts
+    // loads the  existing alerts
     const alerts = getAlerts()
 
     // adds alerts
@@ -46,6 +45,8 @@ function setupForm() {
 
     // reset form
     form.reset()
+
+    loadAdminAlerts()
   })
 }
 
@@ -80,7 +81,6 @@ function loadAdminAlerts() {
   <p><strong>Risk Level:</strong> ${alert.riskLevel}</p>
 
   <p><strong>Summary:</strong><br>${alert.summary}</p>
-  <p><strong>Description:</strong><br>${alert.description}</p>
 
   <p>
     <a href="${alert.link}" target="_blank">View Source</a>
@@ -99,4 +99,81 @@ function loadAdminAlerts() {
   })
 }
 
-// rendering alerts
+// adds interactivity when user clicks on the approve button, but only updates the array in the local storage from 'pending' to 'approved'
+
+function approveAlert(id) {
+  const alerts = getAlerts()
+
+  const updatedAlerts = alerts.map((alert) => {
+    // displays each alert
+    if (alert.id === Number(id)) {
+      // finds the alert that the user clicked
+      return {
+        ...alert,
+        status: "approved",
+        publishedAt: new Date().toISOString(),
+      }
+    }
+    return alert
+  })
+
+  saveAlerts(updatedAlerts)
+  loadAdminAlerts()
+}
+
+// rending alerts - rejected (optional)
+
+function rejectAlert(id) {
+  const alerts = getAlerts()
+
+  const updatedAlerts = alerts.map((alert) => {
+    if (alert.id === Number(id)) {
+      return {
+        ...alert,
+        status: "rejected",
+      }
+    }
+    return alert
+  })
+
+  saveAlerts(updatedAlerts)
+  loadAdminAlerts()
+}
+
+// landing page rendering
+
+function loadPublicAlerts() {
+  const container = document.getElementById("alert-container")
+  const alerts = getAlerts()
+  const approved = alerts.filter((a) => a.status === "approved")
+  container.innerHTML = ""
+
+  approved.forEach((alert) => {
+    const div = document.createElement("div")
+    div.innerHTML = `
+		<h3>${alert.title}</h3>
+		<p>${formatDate(alert.publishedAt)}</p>
+    <p>${alert.summary}</p>
+    <a href="${alert.link}" target="_blank">Source</a>
+		`
+    container.appendChild(div)
+  })
+}
+
+// need update the admin page and have the approved alerts pop in the main landing page
+
+// reset alerts - testing
+
+function resetAlerts() {
+  localStorage.removeItem("alerts")
+  loadAdminAlerts() // refresh UI
+}
+
+// formats the date as Month - Day - Year
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+}

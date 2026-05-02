@@ -6,9 +6,33 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Office of the Investor Fraud Alerts</h1>
-
-    <div id="alertsContainer"></div>
+    <section id="main-title">
+      <h1>Office of the Investor</h1>
+      <h2>Submit a Fraud Alert</h2>
+    </section>
+    <form id="alertForm">
+      <input type="text" id="title" placeholder="Title" required />
+      <input type="date" id="date" placeholder="Date" required />
+      <textarea id="summary" placeholder="Summary" required></textarea>
+      <input type="url" id="link" placeholder="Related Link" required />
+      <select id="type">
+        <option value="" disabled selected hidden>Select an Alert</option>
+        <option value="intrusion">Account Intrusion</option>
+        <option value="crypto">Crypto Trading Platform Fraud</option>
+        <option value="impersonating">Impersonating Recovery Scam</option>
+      </select>
+      <select id="risk">
+        <option value="" disabled selected hidden>
+          Select the Level of Risk
+        </option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <button type="submit">Submit</button>
+      <div id="alertsContainer"></div>
+      <button onclick="resetAlerts()">Reset Alerts</button>
+    </form>
 
     <script src="app.js"></script>
     <script>

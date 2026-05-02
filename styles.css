@@ -1,0 +1,14 @@
+#main-title,
+form {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  margin: 0 auto 1em auto;
+  gap: 1em;
+}
+
+textarea {
+  resize: none;
+  height: 250px;
+  box-sizing: border-box;
+}
