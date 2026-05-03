@@ -56,14 +56,17 @@ function loadAdminAlerts() {
   const container = document.getElementById("adminContainer")
   const alerts = getAlerts()
 
+  // admin only sees 'pending' alerts
+  const pendingAlerts = alerts.filter((a) => a.status === "pending")
+
   container.innerHTML = ""
 
-  if (alerts.length === 0) {
+  if (pendingAlerts.length === 0) {
     container.innerHTML = "<p>No alerts available.</p>"
     return
   }
 
-  alerts.forEach((alert) => {
+  pendingAlerts.forEach((alert) => {
     const div = document.createElement("div")
     div.classList.add("alert-card")
 
@@ -114,6 +117,7 @@ function approveAlert(id) {
         publishedAt: new Date().toISOString(),
       }
     }
+    // displays the approved alert
     return alert
   })
 
@@ -162,8 +166,6 @@ function loadPublicAlerts() {
 
 // need update the admin page and have the approved alerts pop in the main landing page
 
-// reset alerts - testing
-
 function resetAlerts() {
   localStorage.removeItem("alerts")
   loadAdminAlerts() // refresh UI
@@ -177,3 +179,6 @@ function formatDate(dateString) {
     day: "numeric",
   })
 }
+
+// expiration for alerts
+
