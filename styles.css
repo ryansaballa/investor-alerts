@@ -1,3 +1,15 @@
+h3 {
+	margin-top: 0;
+	margin-bottom: 1.6rem;
+}
+
+p {
+	line-height: 1.6;
+	margin-top: 0;
+}
+
+#adminContainer,
+#alertContainer,
 #main-title,
 form {
   display: flex;
@@ -12,3 +24,50 @@ textarea {
   height: 250px;
   box-sizing: border-box;
 }
+
+body{
+  background: #f9f7f6;
+}
+
+button {
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 120px;
+	height: 25px;
+  color: rgb(0, 0, 0);
+  background-color: #a8c208;
+	padding: 1.1rem;
+	border-radius: 3.125rem;
+	border: none;
+	outline: none;
+	transition: background-color 0.25s ease;
+}
+
+button:hover {
+	background-color: #a8c208cc;
+	cursor: pointer;
+}
+
+/* Form - Call to Action */
+
+#ctaContainer {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 1rem;
+}
+
+/* Admin */
+
+.alertCard,
+#adminContainer {
+	background-color: white;
+	padding: 2rem;
+	border: 0.0625rem solid rgb(220, 214, 209);
+	border-radius: 1rem;
+}
+
