@@ -9,8 +9,10 @@ p {
 }
 
 #adminContainer,
+#adminContainerExp,
 #alertContainer,
 #main-title,
+#secondary-title,
 form {
   display: flex;
   flex-direction: column;
@@ -63,8 +65,7 @@ button:hover {
 
 /* Admin */
 
-.alertCard,
-#adminContainer {
+.alertCard{
 	background-color: white;
 	padding: 2rem;
 	border: 0.0625rem solid rgb(220, 214, 209);
