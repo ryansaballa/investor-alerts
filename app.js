@@ -18,7 +18,7 @@ function createAlertFromForm() {
         summary: document.getElementById("summary").value,
         link: document.getElementById("link").value,
         riskLevel: document.getElementById("risk").value,
-        createdAt: document.getElementById("date").value,
+        createdAt: document.getElementById("date").value || new Date().toISOString(),
         status: "pending",
         publishedAt: null,
     };
@@ -84,9 +84,7 @@ function loadAdminAlerts() {
     const pendingAlerts = alerts.filter((a) => a.status === "pending" && !expiredAlerts(a.createdAt)).sort((a, b) => riskOrder[b.riskLevel] - riskOrder[a.riskLevel]);
 
     // admin sees expired alerts
-    const overdueAlerts = alerts
-        .filter((a) => a.status === "approved" && a.createdAt && expiredAlerts(a.createdAt))
-        .sort((a, b) => riskOrder[b.riskLevel] - riskOrder[a.riskLevel]);
+    const overdueAlerts = alerts.filter((a) => expiredAlerts(a.createdAt)).sort((a, b) => riskOrder[b.riskLevel] - riskOrder[a.riskLevel]);
 
     container.innerHTML = "";
     overdueContainer.innerHTML = "";
@@ -144,14 +142,7 @@ function loadAdminAlerts() {
   <p>
     Related Link: <a href="${alert.link}" target="_blank">${alert.title}</a>
   </p>
-  ${
-      alert.status === "pending"
-          ? `
-      <button onclick="approveAlert(${alert.id})">Approve</button>
-      <button onclick="rejectAlert(${alert.id})">Reject</button>
-    `
-          : ""
-  }
+<button onclick="deleteAlert(${alert.id})">Delete</button>
     
     `;
         overdueContainer.appendChild(div);
@@ -193,7 +184,7 @@ function loadPublicAlerts() {
         const div = document.createElement("div");
         div.classList.add("alertCard");
         div.innerHTML = `
-		<p>${formatDate(alert.publishedAt)}</p>
+		<p>${formatDate(alert.createdAt)}</p>
     <h3>${alert.title}</h3>
 		<p>${alert.summary}</p>
     <a href="${alert.link}" target="_blank">Related Link</a>
@@ -209,22 +200,19 @@ function resetAlerts() {
     loadAdminAlerts(); // refresh UI
 }
 
-// expiration for alerts of 2 days passed created Date
+// deletion function for expired alerts - individual
+function deleteAlert(id) {
+    const alerts = getAlerts();
+    const updatedAlerts = alerts.filter((alert) => {
+        return String(alert.id) !== String(id);
+    });
 
-function expiredAlerts(dateString) {
-    const today = new Date();
-    const createdDate = new Date(dateString);
-
-    today.setHours(0, 0, 0, 0);
-    createdDate.setHours(0, 0, 0, 0);
-
-    const diffTime = today - createdDate;
-    const diffDays = diffTime / (1000 * 60 * 60 * 24); // converts difference in diffDays
-
-    return diffDays > 2;
+    saveAlerts(updatedAlerts);
+    loadAdminAlerts();
+    loadPublicAlerts();
 }
 
-// deletion function for expired alerts
+// deletion function for expired alerts - bulk operations
 function deleteExpiredAlerts() {
     const alerts = getAlerts();
     const updatedAlerts = alerts.filter((alert) => {
@@ -237,9 +225,35 @@ function deleteExpiredAlerts() {
     loadPublicAlerts();
 }
 
+// expiration for alerts of 2 days passed created Date
+
+function expiredAlerts(dateString) {
+    if (!dateString) return false;
+
+    const parts = dateString.split("-");
+    const createdDate = new Date(parts[0], parts[1] - 1, parts[2]);
+
+    if (isNaN(createdDate.getTime())) return false;
+
+    const today = new Date();
+
+    // normalize both to midnight LOCAL time
+    today.setHours(0, 0, 0, 0);
+    createdDate.setHours(0, 0, 0, 0);
+
+    const diffDays = (today - createdDate) / (1000 * 60 * 60 * 24);
+
+    return diffDays > 2;
+}
+
 // formats the date as Month - Day - Year
 function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    if (!dateString) return "";
+
+    const parts = dateString.split("-");
+    const localDate = new Date(parts[0], parts[1] - 1, parts[2]);
+
+    return localDate.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
